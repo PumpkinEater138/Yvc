@@ -32,27 +32,24 @@ struct TaskTimerView: View {
     @State var debugMessage = ""
     @State var counter = 0
     
-    
-    
-    
-     @State var timerIsPaused: Bool = true
-     
+    @State var timerIsPaused: Bool = true
     @State var timer: Timer? = nil
 
+    @State var count = 0
+    @State var TimeDisplay = ""
+    
+    
+    
+    
+
+    
     func startTimer(){
         timerIsPaused = false
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true){ tempTimer in
-            if task.seconds == 59 {
-                task.seconds = 00
-                if task.minutes == 59 {
-                    task.minutes = 00
-                    task.hours = task.hours + 1
-            } else {
-                task.minutes = task.minutes + 1
-            }
-          } else {
-            task.seconds = task.seconds + 1
-          }
+            count = count + 1
+            let time = secondsToHoursMinutesSeconds(seconds: count)
+            let timeString = makeTimeString(hours: time.0, minutes: time.1, seconds: time.2)
+            TimeDisplay = timeString
         }
       }
       
@@ -67,6 +64,32 @@ struct TaskTimerView: View {
         task.minutes = 0
         task.seconds = 0
       }
+
+    
+
+   func timerCounter() -> Void
+    {
+        count = count + 1
+        let time = secondsToHoursMinutesSeconds(seconds: count)
+        let timeString = makeTimeString(hours: time.0, minutes: time.1, seconds: time.2)
+        TimeDisplay = timeString
+    }
+    
+    func secondsToHoursMinutesSeconds(seconds: Int) -> (Int, Int, Int)
+    {
+        return ((seconds / 3600), ((seconds % 3600) / 60),((seconds % 3600) % 60))
+    }
+    
+    func makeTimeString(hours: Int, minutes: Int, seconds : Int) -> String
+    {
+        var timeString = ""
+        timeString += String(format: "%02d", hours)
+        timeString += " : "
+        timeString += String(format: "%02d", minutes)
+        timeString += " : "
+        timeString += String(format: "%02d", seconds)
+        return timeString
+    }
 
 
 
@@ -84,8 +107,10 @@ struct TaskTimerView: View {
                         Text("Add Ticking Timer Label Here").foregroundColor(.red)
                         
                         
+                        Text(TimeDisplay)
                         
-                        Text(" \(task.hours) : \(task.minutes) : \(task.seconds)")
+                        
+                      //  Text(" \(task.hours) : \(task.minutes) : \(task.seconds)")
                         
                         
                              if timerIsPaused {
